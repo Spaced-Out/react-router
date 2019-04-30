@@ -1,4 +1,5 @@
-import { func, object, arrayOf, oneOfType, element, shape, string } from 'prop-types'
+import { isValidElementType } from 'react-is'
+import { func, object, arrayOf, oneOfType, element, shape } from 'prop-types'
 
 export function falsy(props, propName, componentName) {
   if (props[propName])
@@ -14,7 +15,17 @@ export const history = shape({
   goForward: func.isRequired
 })
 
-export const component = oneOfType([ func, string ])
+export const component = (props, propName, componentName) => {
+  if (Object.prototype.hasOwnProperty.call(props, propName) && !isValidElementType(props[propName])) {
+    throw new Error(`Invalid prop \`${propName}\` supplied to \`${componentName}\`.`)
+  }
+}
+component.isRequired = (props, propName, componentName) => {
+  if (!Object.prototype.hasOwnProperty.call(props, propName)) {
+    throw new Error(`Prop \`${propName}\` is required in \`${componentName}\`.`)
+  }
+  return component(props, propName, componentName);
+}
 export const components = oneOfType([ component, object ])
 export const route = oneOfType([ object, element ])
 export const routes = oneOfType([ route, arrayOf(route) ])
