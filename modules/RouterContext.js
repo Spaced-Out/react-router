@@ -1,5 +1,6 @@
 import invariant from 'invariant'
 import React from 'react'
+import { isValidElementType } from 'react-is'
 import createReactClass from 'create-react-class'
 import { array, func, object } from 'prop-types'
 
@@ -73,7 +74,12 @@ const RouterContext = createReactClass({
               props[prop] = element[prop]
         }
 
-        if (typeof components === 'object') {
+        if (!isValidElementType(components)) {
+          invariant(
+            typeof components === 'object',
+            'A route component must be either a plain object or an element type.'
+          )
+
           const elements = {}
 
           for (const key in components) {
