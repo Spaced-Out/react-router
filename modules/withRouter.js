@@ -2,7 +2,7 @@ import invariant from 'invariant'
 import React from 'react'
 import createReactClass from 'create-react-class'
 import hoistStatics from 'hoist-non-react-statics'
-import { ContextSubscriber } from './ContextUtils'
+import { RouterReactContext } from './ContextUtils'
 import { routerShape } from './PropTypes'
 
 function getDisplayName(WrappedComponent) {
@@ -14,10 +14,7 @@ export default function withRouter(WrappedComponent, options) {
 
   const WithRouter = createReactClass({
     displayName: 'WithRouter',
-    
-    mixins: [ ContextSubscriber('router') ],
 
-    contextTypes: { router: routerShape },
     propTypes: { router: routerShape },
 
     getWrappedInstance() {
@@ -31,7 +28,7 @@ export default function withRouter(WrappedComponent, options) {
     },
 
     render() {
-      const router = this.props.router || this.context.router
+      const router = this.props.router || this.context
       if (!router) {
         return <WrappedComponent {...this.props} />
       }
@@ -47,6 +44,7 @@ export default function withRouter(WrappedComponent, options) {
     }
   })
 
+  WithRouter.contextType = RouterReactContext
   WithRouter.displayName = `withRouter(${getDisplayName(WrappedComponent)})`
   WithRouter.WrappedComponent = WrappedComponent
 

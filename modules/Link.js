@@ -2,8 +2,7 @@ import React from 'react'
 import createReactClass from 'create-react-class'
 import { bool, object, string, func, oneOfType } from 'prop-types'
 import invariant from 'invariant'
-import { routerShape } from './PropTypes'
-import { ContextSubscriber } from './ContextUtils'
+import { RouterReactContext } from './ContextUtils'
 
 function isLeftClickEvent(event) {
   return event.button === 0
@@ -42,12 +41,6 @@ function resolveToLocation(to, router) {
 const Link = createReactClass({
   displayName: 'Link',
 
-  mixins: [ ContextSubscriber('router') ],
-
-  contextTypes: {
-    router: routerShape
-  },
-
   propTypes: {
     to: oneOfType([ string, object, func ]),
     activeStyle: object,
@@ -72,7 +65,7 @@ const Link = createReactClass({
     if (event.defaultPrevented)
       return
 
-    const { router } = this.context
+    const router = this.context
     invariant(
       router,
       '<Link>s rendered outside of a router context cannot navigate.'
@@ -95,7 +88,7 @@ const Link = createReactClass({
     const { to, activeClassName, activeStyle, onlyActiveOnIndex, innerRef, ...props } = this.props
 
     // Ignore if rendered outside the context of router to simplify unit testing.
-    const { router } = this.context
+    const router = this.context
 
     if (router) {
       // If user does not specify a `to` prop, return an empty anchor tag.
@@ -124,5 +117,7 @@ const Link = createReactClass({
   }
 
 })
+
+Link.contextType = RouterReactContext
 
 export default Link
