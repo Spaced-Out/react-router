@@ -24,7 +24,7 @@ component.isRequired = (props, propName, componentName) => {
   if (!Object.prototype.hasOwnProperty.call(props, propName)) {
     throw new Error(`Prop \`${propName}\` is required in \`${componentName}\`.`)
   }
-  return component(props, propName, componentName);
+  return component(props, propName, componentName)
 }
 export const components = oneOfType([ component, object ])
 export const route = oneOfType([ object, element ])

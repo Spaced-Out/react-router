@@ -1,113 +1,98 @@
 import invariant from 'invariant'
 import React from 'react'
 import { isValidElementType } from 'react-is'
-import createReactClass from 'create-react-class'
 import { array, func, object } from 'prop-types'
 
 import getRouteParams from './getRouteParams'
-import { ContextProvider } from './ContextUtils'
+import { RouterReactContext } from './ContextUtils'
 import { isReactChildren } from './RouteUtils'
 
 /**
  * A <RouterContext> renders the component tree for a given router state
  * and sets the history object and the current location in context.
  */
-const RouterContext = createReactClass({
-  displayName: 'RouterContext',
+function RouterContext({
+  router,
+  location,
+  routes,
+  params,
+  components,
+  createElement = React.createElement
+}) {
+  let element = null
 
-  mixins: [ ContextProvider('router') ],
+  if (components) {
+    const createElementOrNull = (component, props) => (
+      component == null ? null : createElement(component, props)
+    )
 
-  propTypes: {
-    router: object.isRequired,
-    location: object.isRequired,
-    routes: array.isRequired,
-    params: object.isRequired,
-    components: array.isRequired,
-    createElement: func.isRequired
-  },
+    element = components.reduceRight((element, components, index) => {
+      if (components == null)
+        return element // Don't create new children; use the grandchildren.
 
-  getDefaultProps() {
-    return {
-      createElement: React.createElement
-    }
-  },
+      const route = routes[index]
+      const routeParams = getRouteParams(route, params)
+      const props = {
+        location,
+        params,
+        route,
+        router,
+        routeParams,
+        routes
+      }
 
-  childContextTypes: {
-    router: object.isRequired
-  },
+      if (isReactChildren(element)) {
+        props.children = element
+      } else if (element) {
+        for (const prop in element)
+          if (Object.prototype.hasOwnProperty.call(element, prop))
+            props[prop] = element[prop]
+      }
 
-  getChildContext() {
-    return {
-      router: this.props.router
-    }
-  },
-
-  createElement(component, props) {
-    return component == null ? null : this.props.createElement(component, props)
-  },
-
-  render() {
-    const { location, routes, params, components, router } = this.props
-    let element = null
-
-    if (components) {
-      element = components.reduceRight((element, components, index) => {
-        if (components == null)
-          return element // Don't create new children; use the grandchildren.
-
-        const route = routes[index]
-        const routeParams = getRouteParams(route, params)
-        const props = {
-          location,
-          params,
-          route,
-          router,
-          routeParams,
-          routes
-        }
-
-        if (isReactChildren(element)) {
-          props.children = element
-        } else if (element) {
-          for (const prop in element)
-            if (Object.prototype.hasOwnProperty.call(element, prop))
-              props[prop] = element[prop]
-        }
-
-        if (!isValidElementType(components)) {
-          invariant(
+      if (!isValidElementType(components)) {
+        invariant(
             typeof components === 'object',
             'A route component must be either a plain object or an element type.'
           )
 
-          const elements = {}
+        const elements = {}
 
-          for (const key in components) {
-            if (Object.prototype.hasOwnProperty.call(components, key)) {
+        for (const key in components) {
+          if (Object.prototype.hasOwnProperty.call(components, key)) {
               // Pass through the key as a prop to createElement to allow
               // custom createElement functions to know which named component
               // they're rendering, for e.g. matching up to fetched data.
-              elements[key] = this.createElement(components[key], {
-                key, ...props
-              })
-            }
+            const component = components[key]
+            elements[key] = createElementOrNull(component, {
+              key, ...props
+            })
           }
-
-          return elements
         }
 
-        return this.createElement(components, props)
-      }, element)
-    }
+        return elements
+      }
 
-    invariant(
+      return createElementOrNull(components, props)
+    }, element)
+  }
+
+  invariant(
       element === null || element === false || React.isValidElement(element),
       'The root route must render a single element'
     )
 
-    return element
-  }
+  return createElement(RouterReactContext.Provider, {
+    value: router
+  }, element)
+}
 
-})
+RouterContext.propTypes = {
+  router: object.isRequired,
+  location: object.isRequired,
+  routes: array.isRequired,
+  params: object.isRequired,
+  components: array.isRequired,
+  createElement: func
+}
 
 export default RouterContext
