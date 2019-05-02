@@ -206,6 +206,28 @@ export default function createTransitionManager(history, routes) {
     }
   }
 
+  function routeState(location, callback) {
+    if (state.location === location) {
+      callback(null, state)
+    } else {
+      match(location, function (error, redirectLocation, nextState) {
+        if (error) {
+          callback(error)
+        } else if (redirectLocation) {
+          history.replace(redirectLocation)
+        } else if (nextState) {
+          callback(null, nextState)
+        } else {
+          warning(
+            false,
+            'Location "%s" did not match any routes',
+            location.pathname + location.search + location.hash
+          )
+        }
+      })
+    }
+  }
+
   /**
    * This is the API for stateful environments. As the location
    * changes, we update state and call the listener. We can also
@@ -213,25 +235,7 @@ export default function createTransitionManager(history, routes) {
    */
   function listen(listener) {
     function historyListener(location) {
-      if (state.location === location) {
-        listener(null, state)
-      } else {
-        match(location, function (error, redirectLocation, nextState) {
-          if (error) {
-            listener(error)
-          } else if (redirectLocation) {
-            history.replace(redirectLocation)
-          } else if (nextState) {
-            listener(null, nextState)
-          } else {
-            warning(
-              false,
-              'Location "%s" did not match any routes',
-              location.pathname + location.search + location.hash
-            )
-          }
-        })
-      }
+      routeState(location, listener)
     }
 
     // TODO: Only use a single history listener. Otherwise we'll end up with
@@ -250,10 +254,16 @@ export default function createTransitionManager(history, routes) {
     return unsubscribe
   }
 
+  function getState() {
+    // Picking up on a matchContext.
+    return state
+  }
+
   return {
     isActive,
     match,
     listenBeforeLeavingRoute,
-    listen
+    listen,
+    getState
   }
 }
