@@ -1,6 +1,6 @@
 {
-  "name": "react-router",
-  "version": "3.2.1",
+  "name": "@spaced-out/react-router",
+  "version": "3.2.1-spacedout.1",
   "description": "A complete routing library for React",
   "files": [
     "*.md",
@@ -12,9 +12,9 @@
   "main": "lib/index",
   "module": "es/index",
   "jsnext:main": "es/index",
-  "repository": "ReactTraining/react-router",
-  "homepage": "https://github.com/ReactTraining/react-router#readme",
-  "bugs": "https://github.com/ReactTraining/react-router/issues",
+  "repository": "Spaced-Out/react-router",
+  "homepage": "https://github.com/Spaced-Out/react-router#readme",
+  "bugs": "https://github.com/Spaced-Out/react-router/issues",
   "scripts": {
     "build": "npm run build-cjs && npm run build-es",
     "build-cjs": "rimraf lib && cross-env BABEL_ENV=cjs babel ./modules -d lib --ignore __tests__",
@@ -27,10 +27,7 @@
     "test-browser": "cross-env NODE_ENV=test karma start",
     "test-node": "cross-env NODE_ENV=test mocha --require babel-register tests.node.js"
   },
-  "authors": [
-    "Ryan Florence",
-    "Michael Jackson"
-  ],
+  "author": "SpacedOut",
   "license": "MIT",
   "dependencies": {
     "create-react-class": "^15.5.1",
