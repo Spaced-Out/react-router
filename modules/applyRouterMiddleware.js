@@ -21,11 +21,11 @@ export default (...middlewares) => {
     .filter(Boolean)
 
   const makeCreateElement = (baseCreateElement = createElement) => (
-    (Component, props) => (
+    (Component, props, ...children) => (
       withComponent.reduceRight(
         (previous, renderRouteComponent) => (
           renderRouteComponent(previous, props)
-        ), baseCreateElement(Component, props)
+        ), baseCreateElement(Component, props, ...children)
       )
     )
   )

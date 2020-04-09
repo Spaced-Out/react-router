@@ -13,9 +13,11 @@ export Route from './Route'
 /* utils */
 export { createRoutes } from './RouteUtils'
 export RouterContext from './RouterContext'
+export { RouterReactContext } from './ContextUtils'
 export { locationShape, routerShape } from './PropTypes'
 export match from './match'
 export useRouterHistory from './useRouterHistory'
+export useRouter from './useRouter'
 export { formatPattern } from './PatternUtils'
 export applyRouterMiddleware from './applyRouterMiddleware'
 

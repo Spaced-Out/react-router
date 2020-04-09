@@ -1,6 +1,6 @@
 {
   "name": "@spaced-out/react-router",
-  "version": "3.2.1-spacedout.2",
+  "version": "3.2.1-spacedout.3",
   "description": "A complete routing library for React",
   "files": [
     "*.md",

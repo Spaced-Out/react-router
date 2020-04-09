@@ -81,6 +81,7 @@ function RouterContext({
       'The root route must render a single element'
     )
 
+
   return createElement(RouterReactContext.Provider, {
     value: router
   }, element)
