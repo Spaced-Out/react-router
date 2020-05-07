@@ -65,7 +65,7 @@ const Link = createReactClass({
     if (event.defaultPrevented)
       return
 
-    const router = this.context
+    const router = this.context.router
     invariant(
       router,
       '<Link>s rendered outside of a router context cannot navigate.'
@@ -88,7 +88,7 @@ const Link = createReactClass({
     const { to, activeClassName, activeStyle, onlyActiveOnIndex, innerRef, ...props } = this.props
 
     // Ignore if rendered outside the context of router to simplify unit testing.
-    const router = this.context
+    const router = this.context.router
 
     if (router) {
       // If user does not specify a `to` prop, return an empty anchor tag.

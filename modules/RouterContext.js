@@ -17,8 +17,10 @@ function RouterContext({
   routes,
   params,
   components,
-  createElement = React.createElement
+  createElement
 }) {
+  createElement = createElement || React.createElement
+
   let element = null
 
   if (components) {
@@ -83,7 +85,7 @@ function RouterContext({
 
 
   return createElement(RouterReactContext.Provider, {
-    value: router
+    value: { router }
   }, element)
 }
 

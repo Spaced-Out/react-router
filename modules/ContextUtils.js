@@ -1,3 +1,3 @@
 import { createContext } from 'react'
 
-export const RouterReactContext = createContext(null)
+export const RouterReactContext = createContext({ router: null })
